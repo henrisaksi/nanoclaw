@@ -624,6 +624,14 @@ async function main(): Promise<void> {
   // Credentials are injected by the host's credential proxy via ANTHROPIC_BASE_URL.
   // No real secrets exist in the container environment.
   const sdkEnv: Record<string, string | undefined> = { ...process.env };
+  log(`ANTHROPIC_BASE_URL: ${sdkEnv.ANTHROPIC_BASE_URL}`);
+  log(
+    `ANTHROPIC_DEFAULT_SONNET_MODEL: ${sdkEnv.ANTHROPIC_DEFAULT_SONNET_MODEL}`,
+  );
+  log(
+    `ANTHROPIC_AUTH_TOKEN length: ${sdkEnv.ANTHROPIC_AUTH_TOKEN?.length || 0}`,
+  );
+  log(`ANTHROPIC_API_KEY: "${sdkEnv.ANTHROPIC_API_KEY}"`);
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const mcpServerPath = path.join(__dirname, 'ipc-mcp-stdio.js');

@@ -10,6 +10,10 @@ const envConfig = readEnvFile([
   'ASSISTANT_HAS_OWN_NUMBER',
   'ONECLI_URL',
   'TZ',
+  'ANTHROPIC_BASE_URL',
+  'ANTHROPIC_AUTH_TOKEN',
+  'ANTHROPIC_API_KEY',
+  'ANTHROPIC_DEFAULT_SONNET_MODEL',
 ]);
 
 export const ASSISTANT_NAME =
@@ -59,6 +63,16 @@ export const MAX_CONCURRENT_CONTAINERS = Math.max(
   1,
   parseInt(process.env.MAX_CONCURRENT_CONTAINERS || '5', 10) || 5,
 );
+
+export const ANTHROPIC_BASE_URL =
+  process.env.ANTHROPIC_BASE_URL || envConfig.ANTHROPIC_BASE_URL;
+export const ANTHROPIC_AUTH_TOKEN =
+  process.env.ANTHROPIC_AUTH_TOKEN || envConfig.ANTHROPIC_AUTH_TOKEN;
+export const ANTHROPIC_API_KEY =
+  process.env.ANTHROPIC_API_KEY ?? envConfig.ANTHROPIC_API_KEY;
+export const ANTHROPIC_DEFAULT_SONNET_MODEL =
+  process.env.ANTHROPIC_DEFAULT_SONNET_MODEL ||
+  envConfig.ANTHROPIC_DEFAULT_SONNET_MODEL;
 
 function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

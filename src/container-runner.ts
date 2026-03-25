@@ -15,6 +15,10 @@ import {
   IDLE_TIMEOUT,
   ONECLI_URL,
   TIMEZONE,
+  ANTHROPIC_BASE_URL,
+  ANTHROPIC_AUTH_TOKEN,
+  ANTHROPIC_API_KEY,
+  ANTHROPIC_DEFAULT_SONNET_MODEL,
 } from './config.js';
 import { resolveGroupFolderPath, resolveGroupIpcPath } from './group-folder.js';
 import { logger } from './logger.js';
@@ -233,6 +237,23 @@ async function buildContainerArgs(
   // Pass host timezone so container's local time matches the user's
   args.push('-e', `TZ=${TIMEZONE}`);
 
+  // LiteLLM / Custom Endpoint support
+  if (ANTHROPIC_BASE_URL) {
+    args.push('-e', `ANTHROPIC_BASE_URL=${ANTHROPIC_BASE_URL}`);
+  }
+  if (ANTHROPIC_AUTH_TOKEN) {
+    args.push('-e', `ANTHROPIC_AUTH_TOKEN=${ANTHROPIC_AUTH_TOKEN}`);
+  }
+  if (ANTHROPIC_API_KEY !== undefined) {
+    args.push('-e', `ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}`);
+  }
+  if (ANTHROPIC_DEFAULT_SONNET_MODEL) {
+    args.push(
+      '-e',
+      `ANTHROPIC_DEFAULT_SONNET_MODEL=${ANTHROPIC_DEFAULT_SONNET_MODEL}`,
+    );
+  }
+
   // OneCLI gateway handles credential injection — containers never see real secrets.
   // The gateway intercepts HTTPS traffic and injects API keys or OAuth tokens.
   const onecliApplied = await onecli.applyContainerConfig(args, {
@@ -298,7 +319,7 @@ export async function runContainerAgent(
     agentIdentifier,
   );
 
-  logger.debug(
+  logger.info(
     {
       group: group.name,
       containerName,
@@ -400,7 +421,7 @@ export async function runContainerAgent(
       const chunk = data.toString();
       const lines = chunk.trim().split('\n');
       for (const line of lines) {
-        if (line) logger.debug({ container: group.folder }, line);
+        if (line) logger.info({ container: group.folder }, line);
       }
       // Don't reset timeout on stderr — SDK writes debug logs continuously.
       // Timeout only resets on actual output (OUTPUT_MARKER in stdout).
